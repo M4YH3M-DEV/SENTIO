@@ -1,0 +1,29 @@
+# OS + Editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Python venvs
+venvs/
+.venv/
+.venvs/
+
+# ROS / build
+build/
+install/
+log/
+*.pyc
+__pycache__/
+
+# Models & data
+models/
+*.onnx
+*.trt
+tmp/
+*.wav
+
+# Misc
+node_modules/
+dist/
+.env

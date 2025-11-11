@@ -1,0 +1,32 @@
+name: ROS2 Colcon Build (humble)
+
+on:
+  push:
+    branches: [ "main", "dev", "release/*" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up QEMU (for cross arch) 
+        uses: docker/setup-qemu-action@v2
+
+      - name: Pull ros humble image
+        run: docker pull ros:humble-ros-base
+
+      - name: Run colcon build inside docker
+        run: |
+          docker run --rm -v "${{ github.workspace }}":/workspace -w /workspace \
+            ros:humble-ros-base bash -lc "\
+            apt update && apt install -y python3-pip python3-setuptools python3-colcon-common-extensions ros-humble-rosdep >/dev/null && \
+            python3 -m pip install --upgrade pip setuptools wheel && \
+            rosdep update || true && \
+            rosdep install --from-paths sentio/ros2_ws/src --ignore-src -r -y || true && \
+            cd sentio/ros2_ws && colcon build --symlink-install --event-handlers console_direct+"

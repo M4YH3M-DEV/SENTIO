@@ -1,0 +1,51 @@
+name: "Greet Sequence"
+description: "Simple greeting choreography"
+
+steps:
+  - action: "gesture"
+    gesture: "greet"
+    description: "Wave greeting"
+    delay_ms: 0
+    duration_ms: 1000
+    led:
+      color: "cyan"
+      pattern: "steady"
+      intensity: 0.8
+
+  - action: "tts"
+    text: "Hello! Welcome to SENTIO!"
+    voice: "sentio_friendly"
+    emotion: "happy"
+    delay_ms: 500
+
+  - action: "wait"
+    duration_ms: 2000
+    description: "Pause for response"
+
+  - action: "gesture"
+    gesture: "nod"
+    description: "Nod affirmation"
+    delay_ms: 0
+    duration_ms: 1500
+    led:
+      color: "yellow"
+      pattern: "pulse"
+      intensity: 0.7
+
+  - action: "tts"
+    text: "I am delighted to meet you!"
+    emotion: "happy"
+    delay_ms: 500
+
+  - action: "wait"
+    duration_ms: 1000
+
+  - action: "gesture"
+    gesture: "idle"
+    description: "Return to neutral"
+    delay_ms: 0
+    duration_ms: 500
+    led:
+      color: "white"
+      pattern: "steady"
+      intensity: 0.5

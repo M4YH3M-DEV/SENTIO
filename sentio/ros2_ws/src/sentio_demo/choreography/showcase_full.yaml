@@ -1,0 +1,127 @@
+name: "Full Showcase"
+description: "Complete robot capabilities demonstration"
+
+steps:
+  # Introduction
+  - action: "gesture"
+    gesture: "greet"
+    delay_ms: 0
+    duration_ms: 1000
+    led:
+      color: "cyan"
+      pattern: "pulse"
+      intensity: 0.9
+
+  - action: "tts"
+    text: "Welcome to the SENTIO showcase! Let me demonstrate my capabilities."
+    emotion: "happy"
+    delay_ms: 300
+
+  - action: "wait"
+    duration_ms: 3000
+
+  # Emotion display
+  - action: "gesture"
+    gesture: "happy_bounce"
+    delay_ms: 0
+    duration_ms: 2000
+    description: "Express happiness"
+    led:
+      color: "yellow"
+      pattern: "pulse"
+      intensity: 1.0
+
+  - action: "tts"
+    text: "I can express various emotions, like happiness!"
+    emotion: "happy"
+    delay_ms: 500
+
+  - action: "wait"
+    duration_ms: 2000
+
+  # Head movements
+  - action: "gesture"
+    gesture: "nod"
+    delay_ms: 0
+    duration_ms: 1500
+    description: "Demonstrate affirmation"
+    led:
+      color: "green"
+      pattern: "steady"
+      intensity: 0.8
+
+  - action: "tts"
+    text: "I can nod to show agreement."
+    emotion: "neutral"
+    delay_ms: 300
+
+  - action: "wait"
+    duration_ms: 1500
+
+  - action: "gesture"
+    gesture: "shake_head"
+    delay_ms: 0
+    duration_ms: 1500
+    description: "Demonstrate negation"
+    led:
+      color: "orange"
+      pattern: "steady"
+      intensity: 0.8
+
+  - action: "tts"
+    text: "Or shake my head to disagree."
+    emotion: "neutral"
+    delay_ms: 300
+
+  - action: "wait"
+    duration_ms: 1500
+
+  # Gaze control
+  - action: "gesture"
+    gesture: "look_left"
+    delay_ms: 0
+    duration_ms: 1000
+    description: "Look left"
+    led:
+      color: "blue"
+      pattern: "steady"
+      intensity: 0.7
+
+  - action: "wait"
+    duration_ms: 1000
+
+  - action: "gesture"
+    gesture: "look_right"
+    delay_ms: 0
+    duration_ms: 1000
+    description: "Look right"
+    led:
+      color: "blue"
+      pattern: "steady"
+      intensity: 0.7
+
+  - action: "wait"
+    duration_ms: 1000
+
+  # Conclusion
+  - action: "gesture"
+    gesture: "idle"
+    delay_ms: 0
+    duration_ms: 1000
+    led:
+      color: "white"
+      pattern: "steady"
+      intensity: 0.6
+
+  - action: "tts"
+    text: "Thank you for watching! I hope you enjoyed learning about SENTIO."
+    emotion: "happy"
+    delay_ms: 300
+
+  - action: "wait"
+    duration_ms: 2000
+
+  - action: "tts"
+    text: "Feel free to ask me questions!"
+    emotion: "friendly"
+    delay_ms: 500

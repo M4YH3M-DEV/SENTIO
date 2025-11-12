@@ -1,0 +1,29 @@
+# Demo Runner Configuration
+
+demo:
+  # Default choreography directory
+  choreography_dir: ""  # Empty = use package directory
+  
+  # Default sequence to auto-load
+  default_sequence: "greet_sequence"
+  
+  # Auto-start on node launch
+  auto_start: false
+  
+  # Logging
+  log_directory: "/tmp/sentio_demos"
+  log_retention_days: 7
+  
+  # Demo profiles
+  profiles:
+    greet:
+      sequences: ["greet_sequence"]
+      description: "Simple greeting demo"
+    
+    showcase:
+      sequences: ["showcase_full"]
+      description: "Full capability showcase"
+    
+    interactive:
+      sequences: ["nod_sequence", "look_left", "look_right"]
+      description: "Interactive demo"

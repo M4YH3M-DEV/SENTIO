@@ -1,0 +1,9 @@
+group_detector_node:
+  ros__parameters:
+    # Face detection parameters
+    scale_factor: 1.3
+    min_neighbors: 5
+    min_face_size: 30
+    
+    # Enable simulation mode
+    sim_mode: false

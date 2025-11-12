@@ -1,0 +1,19 @@
+audio_emotion_node:
+  ros__parameters:
+    # Model directory
+    models_dir: "/root/aether_sentio_ws/models"
+    
+    # Audio sample rate (Hz)
+    sample_rate: 22050
+    
+    # Confidence threshold
+    confidence_threshold: 0.5
+    
+    # Temporal smoothing factor
+    smoothing_alpha: 0.3
+    
+    # Audio buffer size (seconds)
+    buffer_size_s: 2.0
+    
+    # Enable simulation mode
+    sim_mode: false

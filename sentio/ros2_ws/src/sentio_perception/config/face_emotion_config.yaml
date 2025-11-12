@@ -1,0 +1,16 @@
+face_emotion_node:
+  ros__parameters:
+    # Model directory
+    models_dir: "/root/aether_sentio_ws/models"
+    
+    # Confidence threshold for emotion classification
+    confidence_threshold: 0.5
+    
+    # Temporal smoothing factor (0-1)
+    smoothing_alpha: 0.3
+    
+    # Detection frequency (Hz, limited to avoid overload)
+    detection_frequency: 5
+    
+    # Enable simulation mode
+    sim_mode: false

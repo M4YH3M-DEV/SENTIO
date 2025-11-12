@@ -23,7 +23,69 @@ models/
 tmp/
 *.wav
 
-# Misc
-node_modules/
+
+# Build artifacts
+build/
 dist/
+install/
+log/
+*.egg-info/
+.eggs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Testing
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.hypothesis/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ROS 2
+devel/
+*.bag
+
+# Firmware
+.pio/
+.platformio/
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+.next/
+out/
+dist/
+.env.local
+.env.*.local
+
+# Docker
+Dockerfile.local
+docker-compose.override.yml
+
+# Misc
+*.log
+*.tmp
 .env
+.env.production
+secrets/

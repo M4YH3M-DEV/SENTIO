@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply border-border;
+}
+
+html {
+  @apply scroll-smooth;
+}
+
+body {
+  @apply bg-sentio-primary text-white overflow-x-hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-sentio-secondary;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-sentio-accent rounded-full hover:bg-sentio-accent/80;
+}
+
+/* Animation Classes */
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Component Styles */
+.card {
+  @apply bg-sentio-secondary rounded-lg border border-sentio-accent/20 p-4;
+}
+
+.card-header {
+  @apply flex items-center justify-between mb-4 pb-3 border-b border-sentio-accent/20;
+}
+
+.status-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.status-badge--connected {
+  @apply bg-green-500/20 text-green-300;
+}
+
+.status-badge--disconnected {
+  @apply bg-red-500/20 text-red-300;
+}
+
+.status-badge--connecting {
+  @apply bg-yellow-500/20 text-yellow-300 animate-pulse;
+}
+
+/* Emotion Gradient */
+.emotion-gradient-happy {
+  @apply bg-gradient-to-br from-yellow-400 to-orange-500;
+}
+
+.emotion-gradient-sad {
+  @apply bg-gradient-to-br from-blue-400 to-indigo-600;
+}
+
+.emotion-gradient-angry {
+  @apply bg-gradient-to-br from-red-500 to-orange-600;
+}
+
+.emotion-gradient-neutral {
+  @apply bg-gradient-to-br from-gray-400 to-gray-600;
+}

@@ -1,0 +1,191 @@
+# SENTIO Default Policy Configuration
+
+policy_engine:
+  profile: "balanced"
+  safety_enabled: true
+  confidence_threshold: 0.5
+
+# Decision rules mapping affect to behaviors
+# Rules are evaluated in priority order (higher = more important)
+rules:
+  # Strongly positive emotions
+  - name: "very_happy"
+    priority: 100
+    condition:
+      field: "affect.valence"
+      operator: "gt"
+      value: 0.8
+    behavior:
+      gesture: "happy_bounce"
+      led:
+        color: "yellow"
+        pattern: "pulse"
+        intensity: 1.0
+      tts:
+        text: "I am so happy right now!"
+        emotion: "happy"
+
+  # Positive emotions
+  - name: "happy"
+    priority: 90
+    condition:
+      field: "affect.valence"
+      operator: "gt"
+      value: 0.5
+    behavior:
+      gesture: "wave"
+      led:
+        color: "yellow"
+        pattern: "steady"
+        intensity: 0.8
+      tts:
+        text: "That makes me happy!"
+        emotion: "happy"
+
+  # Neutral/calm
+  - name: "neutral_calm"
+    priority: 50
+    conditions:
+      - field: "affect.valence"
+        operator: "gte"
+        value: -0.3
+      - field: "affect.valence"
+        operator: "lte"
+        value: 0.3
+      - field: "affect.arousal"
+        operator: "lt"
+        value: 0.5
+    behavior:
+      gesture: "listen"
+      led:
+        color: "white"
+        pattern: "steady"
+        intensity: 0.6
+      tts:
+        text: ""
+        emotion: "neutral"
+
+  # Sad emotions
+  - name: "sad"
+    priority: 80
+    condition:
+      field: "affect.valence"
+      operator: "lt"
+      value: -0.5
+    behavior:
+      gesture: "lean_back"
+      led:
+        color: "blue"
+        pattern: "slow_pulse"
+        intensity: 0.7
+      tts:
+        text: "I sense some sadness. Are you okay?"
+        emotion: "sad"
+
+  # Angry emotions
+  - name: "angry"
+    priority: 85
+    condition:
+      field: "affect.valence"
+      operator: "lt"
+      value: -0.6
+    conditions:
+      - field: "affect.arousal"
+        operator: "gt"
+        value: 0.7
+    behavior:
+      gesture: "shake_head"
+      led:
+        color: "red"
+        pattern: "blink"
+        intensity: 1.0
+      tts:
+        text: "You seem upset."
+        emotion: "concerned"
+
+  # Fearful emotions
+  - name: "fearful"
+    priority: 75
+    condition:
+      field: "affect.arousal"
+      operator: "gt"
+      value: 0.8
+    behavior:
+      gesture: "lean_back"
+      led:
+        color: "orange"
+        pattern: "pulse"
+        intensity: 0.8
+      tts:
+        text: "Are you scared? I am here."
+        emotion: "supportive"
+
+  # Context: Person approaching
+  - name: "person_approaching"
+    priority: 70
+    conditions:
+      - field: "context.group_count"
+        operator: "gt"
+        value: 0
+      - field: "context.proximity_m"
+        operator: "lt"
+        value: 1.0
+    behavior:
+      gesture: "greet"
+      led:
+        color: "cyan"
+        pattern: "steady"
+        intensity: 0.9
+      tts:
+        text: "Hello! Welcome!"
+        emotion: "happy"
+
+  # Context: Person very close
+  - name: "person_very_close"
+    priority: 65
+    condition:
+      field: "context.proximity_m"
+      operator: "lt"
+      value: 0.3
+    behavior:
+      gesture: "listen"
+      led:
+        color: "green"
+        pattern: "steady"
+        intensity: 0.8
+      tts:
+        text: ""
+        emotion: "neutral"
+
+  # Default: Idle
+  - name: "default_idle"
+    priority: 0
+    condition:
+      field: "affect.valence"
+      operator: "gte"
+      value: -1.0  # Always true
+    behavior:
+      gesture: "idle"
+      led:
+        color: "white"
+        pattern: "steady"
+        intensity: 0.3
+      tts:
+        text: ""
+        emotion: "neutral"
+
+# Contextual behavior overrides
+context_behaviors:
+  # If no one is around, go idle
+  idle_alone:
+    condition:
+      group_count: 0
+      proximity_m: "> 2.0"
+    behavior:
+      gesture: "idle"
+      led:
+        color: "white"
+        pattern: "steady"
+        intensity: 0.2
+      tts:
+        text: ""

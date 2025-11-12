@@ -1,0 +1,46 @@
+# Thresholds for Behavior Transitions
+
+thresholds:
+  # Valence thresholds
+  valence:
+    very_positive: 0.8
+    positive: 0.5
+    neutral_lower: -0.3
+    neutral_upper: 0.3
+    negative: -0.5
+    very_negative: -0.8
+
+  # Arousal thresholds
+  arousal:
+    calm: 0.33
+    normal: 0.66
+    intense: 0.99
+
+  # Proximity thresholds (meters)
+  proximity:
+    very_close: 0.3
+    close: 0.5
+    medium: 1.0
+    far: 2.0
+    very_far: 5.0
+
+  # Group size thresholds
+  group_size:
+    alone: 0
+    small_group: 2
+    medium_group: 5
+    large_group: 10
+
+  # Confidence thresholds
+  confidence:
+    low: 0.5
+    moderate: 0.7
+    high: 0.85
+    very_high: 0.95
+
+# Transition smoothing
+smoothing:
+  window_size: 3  # Number of frames for moving average
+  min_stability: 0.3  # Minimum time before transitioning (seconds)
+  hysteresis_enabled: true
+  hysteresis_margin: 0.1  # Prevent rapid transitions at thresholds

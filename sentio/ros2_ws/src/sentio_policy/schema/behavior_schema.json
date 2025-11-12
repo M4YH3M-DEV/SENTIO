@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SENTIO Behavior Command Schema",
+  "type": "object",
+  "required": ["gesture", "led", "tts"],
+  "properties": {
+    "gesture": {
+      "type": "string",
+      "description": "Robot physical gesture",
+      "enum": [
+        "idle",
+        "greet",
+        "wave",
+        "nod",
+        "shake_head",
+        "lean_forward",
+        "lean_back",
+        "listen",
+        "think",
+        "confused",
+        "surprised",
+        "happy_bounce"
+      ]
+    },
+    "led": {
+      "type": "object",
+      "description": "LED light control",
+      "required": ["color", "pattern"],
+      "properties": {
+        "color": {
+          "type": "string",
+          "enum": [
+            "off",
+            "white",
+            "red",
+            "green",
+            "blue",
+            "yellow",
+            "cyan",
+            "magenta",
+            "orange"
+          ]
+        },
+        "pattern": {
+          "type": "string",
+          "enum": ["steady", "pulse", "blink", "rainbow", "chase", "slow_pulse"]
+        },
+        "intensity": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.8
+        }
+      }
+    },
+    "tts": {
+      "type": "object",
+      "description": "Text-to-speech command",
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Text to speak"
+        },
+        "voice": {
+          "type": "string",
+          "description": "Voice profile name"
+        },
+        "emotion": {
+          "type": "string",
+          "enum": ["neutral", "happy", "sad", "angry", "supportive", "concerned"]
+        }
+      }
+    },
+    "emotion": {
+      "type": "string",
+      "description": "Detected emotion label"
+    },
+    "valence": {
+      "type": "number",
+      "minimum": -1.0,
+      "maximum": 1.0,
+      "description": "Valence score"
+    },
+    "arousal": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Arousal score"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Confidence in decision"
+    },
+    "duration_s": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 300.0,
+      "description": "Duration of behavior in seconds"
+    }
+  }
+}

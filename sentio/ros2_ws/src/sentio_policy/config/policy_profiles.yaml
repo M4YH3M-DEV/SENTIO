@@ -1,0 +1,33 @@
+# Policy Profiles for Different Scenarios
+
+profiles:
+  balanced:
+    description: "Balanced between perception and responsiveness"
+    rule_weighting: "priority_based"
+    smoothing_enabled: true
+    safety_check_level: "normal"
+
+  expressive:
+    description: "More expressive and animated responses"
+    gesture_intensity_multiplier: 1.3
+    led_intensity_multiplier: 1.2
+    safety_check_level: "relaxed"
+
+  cautious:
+    description: "Conservative, high safety checks"
+    gesture_intensity_multiplier: 0.7
+    led_intensity_multiplier: 0.6
+    safety_check_level: "strict"
+    min_confidence_threshold: 0.7
+
+  minimal:
+    description: "Minimal responses, energy efficient"
+    gesture_intensity_multiplier: 0.5
+    led_intensity_multiplier: 0.3
+    safety_check_level: "minimal"
+
+  interactive:
+    description: "Highly responsive to proximity and group size"
+    proximity_sensitivity: "high"
+    group_response_enabled: true
+    gesture_intensity_multiplier: 1.1

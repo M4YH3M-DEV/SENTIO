@@ -1,0 +1,25 @@
+# Safety Limits Configuration
+
+safety:
+  # Velocity limits (degrees per second)
+  max_velocity_dps: 60.0
+  
+  # Acceleration limits (m/s²)
+  max_acceleration_mss: 2.0
+  
+  # Fall detection threshold (Gs)
+  fall_threshold_g: 1.5
+  
+  # Torque limits (Nm)
+  torque_limit_nm: 5.0
+  
+  # Emergency stop triggers
+  emergency_stop_triggers:
+    - fall_detected
+    - excessive_current
+    - user_estop_button
+  
+  # Safe shutdown sequence
+  safe_shutdown:
+    duration_ms: 2000
+    target_position: neutral

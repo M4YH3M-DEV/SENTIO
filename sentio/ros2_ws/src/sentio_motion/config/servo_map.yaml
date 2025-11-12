@@ -1,0 +1,48 @@
+# Servo Hardware Mapping
+
+# PCA9685 channel assignments (if using I2C)
+pca9685:
+  address: 0x40
+  frequency_hz: 50
+  channels:
+    neck_pan:
+      channel: 0
+      min_us: 1000
+      max_us: 2000
+    neck_tilt:
+      channel: 1
+      min_us: 1000
+      max_us: 2000
+    torso_rotate:
+      channel: 2
+      min_us: 1000
+      max_us: 2000
+    left_shoulder:
+      channel: 3
+      min_us: 1000
+      max_us: 2000
+    right_shoulder:
+      channel: 4
+      min_us: 1000
+      max_us: 2000
+
+# ESP32 servo mapping (if using serial)
+esp32:
+  serial_port: /dev/ttyUSB0
+  baudrate: 115200
+  servos:
+    0:
+      name: "Neck Pan"
+      pin: 12
+    1:
+      name: "Neck Tilt"
+      pin: 13
+    2:
+      name: "Torso Rotate"
+      pin: 14
+    3:
+      name: "Left Shoulder"
+      pin: 15
+    4:
+      name: "Right Shoulder"
+      pin: 16

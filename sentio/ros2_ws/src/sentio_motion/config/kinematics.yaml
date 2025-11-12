@@ -1,0 +1,94 @@
+# SENTIO Kinematics Configuration
+
+# Servo mapping (name -> ID)
+servo_map:
+  neck_pan: 0
+  neck_tilt: 1
+  torso_rotate: 2
+  left_shoulder: 3
+  right_shoulder: 4
+
+# Neutral positions (degrees)
+neutral_angles:
+  0: 90.0
+  1: 90.0
+  2: 90.0
+  3: 90.0
+  4: 90.0
+
+# Angle limits (degrees)
+min_angles:
+  0: 0.0
+  1: 0.0
+  2: 0.0
+  3: 0.0
+  4: 0.0
+
+max_angles:
+  0: 180.0
+  1: 180.0
+  2: 180.0
+  3: 180.0
+  4: 180.0
+
+# Preset gestures
+gestures:
+  idle:
+    description: "Neutral standing position"
+    positions:
+      0: 90
+      1: 90
+      2: 90
+      3: 90
+      4: 90
+    duration_ms: 500
+
+  greet:
+    description: "Wave hand gesture"
+    positions:
+      4: 45
+    duration_ms: 1000
+
+  nod:
+    description: "Nod head yes"
+    keyframes:
+      - positions: {1: 100}
+        duration_ms: 300
+      - positions: {1: 80}
+        duration_ms: 300
+      - positions: {1: 90}
+        duration_ms: 300
+
+  shake_head:
+    description: "Shake head no"
+    keyframes:
+      - positions: {0: 110}
+        duration_ms: 250
+      - positions: {0: 70}
+        duration_ms: 250
+      - positions: {0: 90}
+        duration_ms: 250
+
+  look_left:
+    description: "Look to the left"
+    positions:
+      0: 135
+    duration_ms: 500
+
+  look_right:
+    description: "Look to the right"
+    positions:
+      0: 45
+    duration_ms: 500
+
+  happy_bounce:
+    description: "Happy bouncing motion"
+    keyframes:
+      - positions: {3: 70, 4: 70}
+        duration_ms: 200
+      - positions: {3: 90, 4: 90}
+        duration_ms: 200
+      - positions: {3: 70, 4: 70}
+        duration_ms: 200
+      - positions: {3: 90, 4: 90}
+        duration_ms: 200

@@ -1,0 +1,18 @@
+# SENTIO Hardware udev Rules
+# Install with: sudo cp 99-sentio.rules /etc/udev/rules.d/
+# Then reload: sudo udevadm control --reload-rules && sudo udevadm trigger
+
+# TFMini-S LiDAR (Benewake) - CH340 USB-serial
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE="0666", SYMLINK+="tfmini_lidar"
+
+# MaxSonar - Generic FTDI USB-serial
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", MODE="0666", SYMLINK+="maxsonar_sensor"
+
+# Generic USB cameras (UVC)
+SUBSYSTEMS=="usb", ATTRS{bDeviceClass}=="ef", ATTRS{bDeviceSubClass}=="02", MODE="0666"
+
+# I2C Devices
+KERNEL=="i2c-*", MODE="0666"
+
+# ReSpeaker 2-Mic Array
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2886", ATTRS{idProduct}=="0018", MODE="0666", SYMLINK+="respeaker"

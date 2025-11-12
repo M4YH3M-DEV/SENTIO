@@ -1,0 +1,20 @@
+# MPU-9250 IMU Configuration
+
+imu_node:
+  ros__parameters:
+    # I2C configuration
+    i2c_bus: 1
+    i2c_address: 0x68
+    
+    # Publishing rate (Hz)
+    publish_rate_hz: 50
+    
+    # Frame ID for transform chain
+    frame_id: "imu_link"
+    
+    # Sensor ranges
+    accel_scale_g: 16.0      # ±16g range
+    gyro_scale_dps: 2000.0   # ±2000 degrees/sec
+    
+    # Enable simulation mode for testing
+    sim_mode: false

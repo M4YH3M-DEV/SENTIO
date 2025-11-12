@@ -1,0 +1,20 @@
+# MaxSonar Ultrasonic Sensor Configuration
+
+maxsonar_node:
+  ros__parameters:
+    # Serial port configuration
+    port: "/dev/ttyUSB1"
+    baudrate: 9600
+    
+    # Publishing rate (Hz)
+    publish_rate_hz: 20
+    
+    # Frame ID for transform chain
+    frame_id: "maxsonar_link"
+    
+    # Sensor range limits (meters)
+    min_range_m: 0.04
+    max_range_m: 3.0
+    
+    # Enable simulation mode for testing
+    sim_mode: false

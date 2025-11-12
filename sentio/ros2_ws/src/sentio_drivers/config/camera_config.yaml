@@ -1,0 +1,19 @@
+# USB Camera Configuration
+
+uvc_camera_node:
+  ros__parameters:
+    # Camera index (0 for primary USB camera)
+    camera_index: 0
+    
+    # Resolution
+    frame_width: 640
+    frame_height: 480
+    
+    # Frame rate (Hz)
+    fps: 30
+    
+    # Frame ID for transform chain
+    frame_id: "camera_link"
+    
+    # Enable simulation mode for testing
+    sim_mode: false

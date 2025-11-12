@@ -1,0 +1,45 @@
+# AETHER Fusion Configuration
+
+fusion:
+  # Weighting strategy
+  strategy: "confidence_weighted"
+  # Options: equal_weight, confidence_weighted, recency_weighted, adaptive
+  
+  # Base modality weights (before adjustment)
+  base_weights:
+    vision: 0.4
+    audio: 0.4
+    context: 0.2
+  
+  # Smoothing parameters
+  smoothing:
+    enabled: true
+    alpha: 0.2  # EMA smoothing factor
+    window_size: 5
+  
+  # Consistency thresholds
+  consistency:
+    min_threshold: 0.5  # Minimum consistency for acceptance
+    anomaly_zscore: 2.0  # Z-score for anomaly detection
+
+# Explainability
+explainability:
+  # Enable detailed reasoning trails
+  record_reasoning: true
+  
+  # Log directory
+  log_dir: "/root/aether_sentio_ws/logs"
+  
+  # Decision logging
+  log_decisions: true
+  log_rotation_mb: 50
+  log_retention_count: 10
+  
+  # Encryption (optional)
+  encrypt_logs: false
+
+# Model paths
+models:
+  base_dir: "/root/aether_sentio_ws/models"
+  face_emotion: "face_emotion.onnx"
+  audio_affect: "audio_affect.onnx"

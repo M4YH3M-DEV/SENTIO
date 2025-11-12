@@ -1,0 +1,20 @@
+fusion_node:
+  ros__parameters:
+    # Fusion strategy
+    fusion_strategy: "confidence_weighted"
+    # Options: equal_weight, confidence_weighted, recency_weighted, adaptive
+    
+    # Configuration file (optional)
+    fusion_config_file: ""
+    
+    # Logging directory
+    log_dir: "/root/aether_sentio_ws/logs"
+    
+    # Record reasoning trails
+    record_reasoning: true
+    
+    # Enable temporal smoothing
+    smoothing_enabled: true
+    
+    # Enable simulation mode
+    sim_mode: false

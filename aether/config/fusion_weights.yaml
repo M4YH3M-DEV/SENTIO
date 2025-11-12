@@ -1,0 +1,45 @@
+# Fusion Weight Profiles
+
+profiles:
+  # Default balanced profile
+  balanced:
+    vision_weight: 0.5
+    audio_weight: 0.5
+    description: "Balanced between vision and audio modalities"
+  
+  # Prefer visual cues
+  vision_dominant:
+    vision_weight: 0.7
+    audio_weight: 0.3
+    description: "Emphasize facial expressions"
+  
+  # Prefer audio cues
+  audio_dominant:
+    vision_weight: 0.3
+    audio_weight: 0.7
+    description: "Emphasize speech tone and prosody"
+  
+  # For context with high ambient noise
+  clean_audio:
+    vision_weight: 0.4
+    audio_weight: 0.6
+    description: "Slightly favor audio when quality is good"
+  
+  # For low-light or occlusion scenarios
+  poor_vision:
+    vision_weight: 0.2
+    audio_weight: 0.8
+    description: "Heavily favor audio when vision unreliable"
+
+# Dynamic weighting strategy parameters
+adaptive:
+  # Confidence thresholds
+  high_confidence_threshold: 0.8
+  low_confidence_threshold: 0.5
+  
+  # Modality reliability factors
+  face_detection_bonus: 0.1  # Add to vision weight if face detected
+  speech_activity_bonus: 0.1  # Add to audio weight if speech detected
+  
+  # Temporal consistency weight
+  consistency_factor: 0.1

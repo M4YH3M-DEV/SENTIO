@@ -1,0 +1,23 @@
+# SENTIO TTS Bridge Configuration
+
+sentio_tts_bridge_node:
+  ros__parameters:
+    # Piper server configuration
+    piper_url: "http://localhost:5000"
+    piper_timeout_s: 30.0
+    piper_max_retries: 3
+    
+    # Audio file storage
+    audio_base_dir: "/tmp/sentio_tts"
+    
+    # Default voice profile
+    default_voice: "sentio_neutral"
+    
+    # Queue configuration
+    queue_size: 10
+    
+    # Health check interval (seconds)
+    health_check_interval_s: 10.0
+    
+    # Enable simulation mode for testing
+    sim_mode: false

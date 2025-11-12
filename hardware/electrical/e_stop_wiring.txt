@@ -1,0 +1,208 @@
+SENTIO E-STOP WIRING DIAGRAM
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                        E-STOP CIRCUIT SCHEMATIC                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+Power Supply                            Emergency Stop Button
+    5V ──────────┐                          (Normally Open)
+                 │                               │
+                 ├─────[2A Fuse]────┬──────────[Button]────┐
+                 │                  │                       │
+                 └──────────────────┼───────────────────────┤
+                                    │                       │
+                                    ▼                       ▼
+                            ┌──────────────┐      ┌──────────────┐
+                            │   ESP32      │      │ Optional:    │
+                            │              │      │ Relay/MOSFET │
+                            │   GPIO35     │◄─────│              │
+                            │ (E-STOP in)  │      │ (hard cutoff)│
+                            │              │      │              │
+                            └──────┬───────┘      └──────────────┘
+                                   │
+                                   ▼
+                            ┌──────────────┐
+                            │ I2C Bus      │
+                            │              │
+                            └──────┬───────┘
+                                   │
+                      ┌────────────┼────────────┐
+                      │            │            │
+                      ▼            ▼            ▼
+                   ┌────┐      ┌────┐      ┌────┐
+                   │PCA │      │    │      │    │
+                   │9685│      │    │      │    │
+                   └────┘      └────┘      └────┘
+                      │
+          ┌───────────┼───────────┐
+          │           │           │
+          ▼           ▼           ▼
+        PWM0        PWM1        PWM2  (etc.)
+          │           │           │
+          ├───────────┼───────────┤
+          │           │           │
+       Servo0      Servo1      Servo2
+
+
+
+DETAILED CONNECTIONS:
+
+┌─────────────────────────────────────────────────┐
+│         BUTTON ASSEMBLY (16mm Panel Mount)      │
+│                                                 │
+│  ╔═══╗                                         │
+│  ║ O ║  ← Red button (E-STOP indication)      │
+│  ╚═╤═╝                                         │
+│    │                                           │
+│ ┌──┴──┬────────────────────────────────────┐  │
+│ │NO   │ Common pin (when button released)  │  │
+│ │     │                                    │  │
+│ │NC   │ Common pin (when button pressed)   │  │
+│ └─────┴────────────────────────────────────┘  │
+│                                                 │
+│ Use: NO (Normally Open) contact               │
+│      This way: Button unpressed → Normal Op   │
+│                Button pressed → E-STOP active │
+└─────────────────────────────────────────────────┘
+
+
+WIRING TO ESP32:
+
+  ┌──────────────────────────────┐
+  │        ESP32 DOIT V1         │
+  │                              │
+  │  Pin 35 (GPIO35)  ◄─────────┐│
+  │  (Input, 3.3V)   │          ││
+  │                  │    ┌─────┘│
+  │  GND ────────────┼────┤      │
+  │  (Ground ref)    │    │      │
+  │                  │    │    To Button
+  └──────────────────┴────┤
+                          │
+                   ┌──────▼──────┐
+                   │  Pull-Down   │
+                   │   10kΩ Res.  │
+                   │              │
+                   └──────┬───────┘
+                          │
+                          ├─────► To Button NO
+                          │
+                          ▼
+                        GND
+
+
+FIRMWARE LOGIC:
+
+  // Read E-stop pin
+  bool estop_pressed = (digitalRead(ESTOP_PIN) == LOW);
+  
+  if (estop_pressed) {
+    // Move all servos to neutral
+    // Disable all commands
+    // Set emergency_stop_active = true
+  }
+
+
+SIGNAL TIMING:
+
+Unpressed: GPIO35 = 3.3V (pulled HIGH)
+Pressed:   GPIO35 = 0V   (pulled to GND through button)
+Debounce:  50ms wait for stable signal
+
+
+REDUNDANT DESIGN (OPTIONAL):
+
+For critical applications, add independent relay:
+
+  ┌─────────────────────────────────────┐
+  │      Relay Hard Cutoff (optional)   │
+  │                                     │
+  │  Button ──┬────────┐                │
+  │           │        │                │
+  │        [Relay]     │                │
+  │        Coil        │                │
+  │           │        │                │
+  │          GND      COM               │
+  │                    │                │
+  │                ┌───┴────┬───┐       │
+  │                │NO      │NC │       │
+  │                │ Normal │ E-│       │
+  │                │ Path   │ Stop     │
+  │                └────────┴───┘       │
+  │                    │                │
+  │              To PSU Output          │
+  │                                     │
+  └─────────────────────────────────────┘
+
+
+TESTING PROCEDURE:
+
+1. Dry Contact Test (without power):
+   - Press button
+   - Multimeter: Should read GND on GPIO35 pin
+   - Release button
+   - Multimeter: Should read 3.3V on GPIO35 pin
+
+2. Live Test (with power):
+   - Send servo move command
+   - Press E-stop button
+   - Verify: All servos move to neutral within 100ms
+   - Verify: No new commands accepted
+   - Release button
+   - Verify: Behavior returns to normal after reset/clear_estop
+
+3. Stress Test:
+   - Rapid press/release cycles (10x in 1 minute)
+   - Verify consistent response
+   - Check for noise in GPIO reading
+
+
+CONNECTOR OPTIONS:
+
+Option 1: Screw Terminals
+  - Simplest
+  - Good for prototyping
+  - Less reliable for production
+
+Option 2: DuPont Connectors (2.54mm)
+  - Easy to connect/disconnect
+  - Good for modular design
+  - Secure with lock tabs
+
+Option 3: 3.5mm Audio Jack
+  - Rugged
+  - Easy to find
+  - Convert to screw terminal inside housing
+
+
+CABLE SPECIFICATIONS:
+
+  - Gauge: 22 AWG (0.3mm²) minimum for 3.3V logic
+  - Length: Keep < 2 meters to minimize noise
+  - Shielding: Not strictly needed for DC, but recommended
+  - Twist: Pairs in twisted format to reduce EMI
+
+
+SAFETY NOTES:
+
+⚠ E-STOP IS CRITICAL SAFETY DEVICE
+  - Test monthly
+  - Never bypass or disable
+  - Document all modifications
+  - Train all operators on location and use
+
+⚠ Watchdog timeout is backup only
+  - Do not rely on software alone
+  - Hardware E-stop must be independent
+  - Test both individually
+
+⚠ Button must be accessible
+  - Mount on front panel at eye level
+  - Use bright red color
+  - Add tactile feedback (audible click)
+  - Surround with yellow/black stripe
+
+---
+
+Last Updated: 2025-11-13
+Document Version: 1.0

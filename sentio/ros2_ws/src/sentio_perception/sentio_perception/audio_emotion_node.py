@@ -3,9 +3,11 @@
 Audio Emotion Detection Node
 
 Analyzes voice tone and emotional content from audio streams.
+Includes optional speech-to-text with faster-whisper.
 
 Subscribes to: /audio/data (audio chunks) or internal microphone
 Publishes to: /affect/audio (sentio_msgs/Affect)
+             /audio/transcription (std_msgs/String) [if speech enabled]
 """
 
 import rclpy
@@ -24,13 +26,12 @@ from .model_loader import ModelLoader
 from .audio_processor import AudioProcessor
 from .emotion_utils import EmotionMapper, SmoothingFilter
 
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 class AudioEmotionNode(Node):
-    """Audio emotion detection node."""
+    """Audio emotion detection node with optional speech-to-text."""
     
     def __init__(self):
         """Initialize audio emotion node."""
@@ -44,6 +45,12 @@ class AudioEmotionNode(Node):
         self.declare_parameter('buffer_size_s', 2.0)
         self.declare_parameter('sim_mode', False)
         
+        # Speech-to-text parameters
+        self.declare_parameter('enable_speech', True)
+        self.declare_parameter('whisper_model', 'base')
+        self.declare_parameter('whisper_device', 'cpu')
+        self.declare_parameter('whisper_compute_type', 'int8')
+        
         # Get parameters
         self.models_dir = self.get_parameter('models_dir').value
         self.sample_rate = self.get_parameter('sample_rate').value
@@ -51,6 +58,11 @@ class AudioEmotionNode(Node):
         self.smoothing_alpha = self.get_parameter('smoothing_alpha').value
         self.buffer_size_s = self.get_parameter('buffer_size_s').value
         self.sim_mode = self.get_parameter('sim_mode').value
+        
+        self.enable_speech = self.get_parameter('enable_speech').value
+        self.whisper_model = self.get_parameter('whisper_model').value
+        self.whisper_device = self.get_parameter('whisper_device').value
+        self.whisper_compute_type = self.get_parameter('whisper_compute_type').value
         
         # QoS profile
         affect_qos = QoSProfile(
@@ -61,11 +73,21 @@ class AudioEmotionNode(Node):
         
         # Publishers
         self.affect_pub = self.create_publisher(Affect, '/affect/audio', affect_qos)
+        self.transcription_pub = self.create_publisher(String, '/audio/transcription', 10)
         
         # Model and utilities
         self.model_loader = ModelLoader(self.models_dir)
         self.audio_model = self.model_loader.load_model('audio_affect')
-        self.audio_processor = AudioProcessor(sample_rate=self.sample_rate)
+        
+        # Initialize audio processor with faster-whisper
+        self.audio_processor = AudioProcessor(
+            sample_rate=self.sample_rate,
+            enable_speech=self.enable_speech,
+            whisper_model=self.whisper_model,
+            whisper_device=self.whisper_device,
+            whisper_compute_type=self.whisper_compute_type
+        )
+        
         self.smoothing_filter = SmoothingFilter(self.smoothing_alpha)
         
         # Audio buffer
@@ -75,6 +97,10 @@ class AudioEmotionNode(Node):
         
         # State tracking
         self.running = True
+        self.last_transcription_time = 0.0
+        self.transcription_interval = 5.0  # Transcribe every 5 seconds
+        
+        # Analysis thread
         self.analysis_thread = threading.Thread(
             target=self._analysis_loop,
             daemon=True
@@ -83,8 +109,15 @@ class AudioEmotionNode(Node):
         
         self.get_logger().info(
             f'Audio Emotion Node initialized | '
-            f'Sample rate: {self.sample_rate} Hz | Buffer: {self.buffer_size_s}s'
+            f'Sample rate: {self.sample_rate} Hz | Buffer: {self.buffer_size_s}s | '
+            f'Speech-to-text: {"enabled" if self.enable_speech else "disabled"}'
         )
+        
+        if self.enable_speech:
+            self.get_logger().info(
+                f'faster-whisper: {self.whisper_model} on {self.whisper_device} '
+                f'({self.whisper_compute_type})'
+            )
     
     def _analysis_loop(self):
         """Continuous audio analysis loop."""
@@ -96,6 +129,13 @@ class AudioEmotionNode(Node):
                     self._publish_mock_affect()
                 else:
                     self._analyze_audio()
+                
+                # Periodic transcription
+                if self.enable_speech and not self.sim_mode:
+                    current_time = time.time()
+                    if current_time - self.last_transcription_time > self.transcription_interval:
+                        self._transcribe_audio()
+                        self.last_transcription_time = current_time
                 
                 time.sleep(analysis_interval)
             
@@ -129,6 +169,32 @@ class AudioEmotionNode(Node):
         except Exception as e:
             self.get_logger().error(f'Audio analysis error: {str(e)}')
     
+    def _transcribe_audio(self):
+        """Transcribe audio buffer to text using faster-whisper."""
+        try:
+            with self.buffer_lock:
+                if len(self.audio_buffer) < self.buffer_size // 4:
+                    return
+                
+                audio_array = np.array(list(self.audio_buffer), dtype=np.float32)
+            
+            # Transcribe using faster-whisper
+            transcription = self.audio_processor.transcribe_audio_array(
+                audio_array,
+                beam_size=5
+            )
+            
+            if transcription and len(transcription.strip()) > 0:
+                # Publish transcription
+                msg = String()
+                msg.data = transcription
+                self.transcription_pub.publish(msg)
+                
+                self.get_logger().info(f'Transcription: "{transcription[:50]}..."')
+        
+        except Exception as e:
+            self.get_logger().error(f'Transcription error: {str(e)}')
+    
     def _run_inference(self, features: np.ndarray) -> tuple:
         """
         Run emotion inference on audio features.
@@ -144,7 +210,7 @@ class AudioEmotionNode(Node):
                 return 'neutral', 0.0
             
             # Prepare input
-            input_name = self.audio_model.get_inputs()[0].name
+            input_name = self.audio_model.get_inputs().name
             
             # Ensure correct shape
             if len(features.shape) == 1:
@@ -154,7 +220,7 @@ class AudioEmotionNode(Node):
             
             # Run inference
             outputs = self.audio_model.run(None, input_feed)
-            logits = outputs[0][0]
+            logits = outputs
             
             # Get emotion with highest score
             emotion_labels = ['neutral', 'happy', 'sad', 'angry']

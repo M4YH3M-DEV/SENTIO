@@ -1,14 +1,13 @@
 """
 Audio Processing for Emotion Detection
 
-Extracts features from audio for emotion analysis.
+Extracts features from audio for emotion analysis and performs speech-to-text.
 """
 
 import logging
 import numpy as np
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 import struct
-
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +15,7 @@ logger = logging.getLogger(__name__)
 class AudioProcessor:
     """
     Processes raw audio data and extracts emotion-relevant features.
+    Includes speech-to-text using faster-whisper.
     """
     
     def __init__(
@@ -23,7 +23,11 @@ class AudioProcessor:
         sample_rate: int = 22050,
         n_mfcc: int = 13,
         n_fft: int = 2048,
-        hop_length: int = 512
+        hop_length: int = 512,
+        enable_speech: bool = True,
+        whisper_model: str = "base",
+        whisper_device: str = "cpu",
+        whisper_compute_type: str = "int8"
     ):
         """
         Initialize audio processor.
@@ -33,11 +37,16 @@ class AudioProcessor:
             n_mfcc: Number of MFCCs to extract
             n_fft: FFT window size
             hop_length: Number of samples between FFT frames
+            enable_speech: Enable speech-to-text with faster-whisper
+            whisper_model: Whisper model size ('tiny', 'base', 'small', 'medium', 'large')
+            whisper_device: Device for whisper ('cpu' or 'cuda')
+            whisper_compute_type: Compute type ('int8', 'float16', 'float32')
         """
         self.sample_rate = sample_rate
         self.n_mfcc = n_mfcc
         self.n_fft = n_fft
         self.hop_length = hop_length
+        self.enable_speech = enable_speech
         
         # Try to import librosa for MFCC extraction
         try:
@@ -48,6 +57,25 @@ class AudioProcessor:
         except ImportError:
             logger.warning('librosa not available, using basic audio features')
             self.has_librosa = False
+        
+        # Initialize faster-whisper for speech-to-text
+        self.whisper_model = None
+        if enable_speech:
+            try:
+                from faster_whisper import WhisperModel
+                
+                self.whisper_model = WhisperModel(
+                    whisper_model,
+                    device=whisper_device,
+                    compute_type=whisper_compute_type
+                )
+                logger.info(f'faster-whisper loaded: {whisper_model} on {whisper_device}')
+            except ImportError:
+                logger.warning('faster-whisper not available, speech-to-text disabled')
+                self.enable_speech = False
+            except Exception as e:
+                logger.error(f'Failed to load faster-whisper: {str(e)}')
+                self.enable_speech = False
     
     def process_audio_chunk(
         self,
@@ -82,6 +110,98 @@ class AudioProcessor:
         except Exception as e:
             logger.error(f'Audio processing error: {str(e)}')
             return None
+    
+    def transcribe_audio(
+        self,
+        audio_path: str,
+        beam_size: int = 5,
+        language: Optional[str] = None
+    ) -> Tuple[str, List[dict]]:
+        """
+        Transcribe audio file to text using faster-whisper.
+        
+        Args:
+            audio_path: Path to audio file (WAV, MP3, etc.)
+            beam_size: Beam size for decoding (higher = more accurate but slower)
+            language: Language code (e.g., 'en', 'es') or None for auto-detect
+        
+        Returns:
+            Tuple of (full_text, segments_list)
+        """
+        if not self.enable_speech or self.whisper_model is None:
+            logger.warning('Speech-to-text not available')
+            return "", []
+        
+        try:
+            segments, info = self.whisper_model.transcribe(
+                audio_path,
+                beam_size=beam_size,
+                language=language
+            )
+            
+            # Collect all segments
+            full_text = []
+            segments_list = []
+            
+            for segment in segments:
+                full_text.append(segment.text)
+                segments_list.append({
+                    'start': segment.start,
+                    'end': segment.end,
+                    'text': segment.text,
+                    'confidence': getattr(segment, 'avg_logprob', 0.0)
+                })
+            
+            transcription = " ".join(full_text)
+            
+            logger.info(f'Transcription complete: "{transcription[:50]}..."')
+            logger.debug(f'Detected language: {info.language} (prob: {info.language_probability:.2f})')
+            
+            return transcription, segments_list
+        
+        except Exception as e:
+            logger.error(f'Transcription error: {str(e)}')
+            return "", []
+    
+    def transcribe_audio_array(
+        self,
+        audio_array: np.ndarray,
+        beam_size: int = 5
+    ) -> str:
+        """
+        Transcribe audio numpy array to text.
+        
+        Args:
+            audio_array: Audio as numpy array (float32, normalized to [-1, 1])
+            beam_size: Beam size for decoding
+        
+        Returns:
+            Transcribed text
+        """
+        if not self.enable_speech or self.whisper_model is None:
+            return ""
+        
+        try:
+            import tempfile
+            import soundfile as sf
+            
+            # Write temporary WAV file
+            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as tmp_file:
+                tmp_path = tmp_file.name
+                sf.write(tmp_path, audio_array, self.sample_rate)
+            
+            # Transcribe
+            transcription, _ = self.transcribe_audio(tmp_path, beam_size=beam_size)
+            
+            # Cleanup
+            import os
+            os.unlink(tmp_path)
+            
+            return transcription
+        
+        except Exception as e:
+            logger.error(f'Array transcription error: {str(e)}')
+            return ""
     
     def extract_features(self, audio: np.ndarray) -> np.ndarray:
         """
@@ -220,10 +340,10 @@ def parse_wav_header(wav_data: bytes) -> Tuple[int, int, int]:
         
         # Parse WAV header
         # Bytes 24-27: sample rate
-        sample_rate = struct.unpack('<I', wav_data[24:28])[0]
+        sample_rate = struct.unpack('<I', wav_data[24:28])
         
         # Byte 22-23: number of channels
-        num_channels = struct.unpack('<H', wav_data[22:24])[0]
+        num_channels = struct.unpack('<H', wav_data[22:24])
         
         # Find 'data' chunk
         data_idx = wav_data.find(b'data')
@@ -231,7 +351,7 @@ def parse_wav_header(wav_data: bytes) -> Tuple[int, int, int]:
             return sample_rate, num_channels, 0
         
         # Bytes after 'data': chunk size
-        chunk_size = struct.unpack('<I', wav_data[data_idx + 4:data_idx + 8])[0]
+        chunk_size = struct.unpack('<I', wav_data[data_idx + 4:data_idx + 8])
         num_samples = chunk_size // (2 * num_channels)  # Assuming 16-bit audio
         
         return sample_rate, num_channels, num_samples

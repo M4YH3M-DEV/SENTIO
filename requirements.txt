@@ -1,75 +1,27 @@
-# ==== Core Python Runtime ====
 python-dotenv>=1.0.0
-
-# ==== ROS 2 Python ====
-rclpy>=2.4.0
-std-msgs>=0.8.0
-sensor-msgs>=4.1.1
-
-# ==== AI/ML/Perception ====
+PyYAML>=6.0
+numpy>=1.26.0
+scipy>=1.12.0
 torch>=2.2.0
 torchvision>=0.18.0
 onnx>=1.16.0
 onnxruntime>=1.18.0
-scipy>=1.12.0
-numpy>=1.26.0
 opencv-python>=4.9.0
 mediapipe>=0.10.0
-keyboard>=0.13.5
-
-# ==== RL/Gym (Simulation & Policy Training) ====
-gymnasium>=0.29.1
-stable-baselines3>=2.3.2
-tensorboard>=2.16.0
-PyYAML>=6.0
-
-# ==== Audio Processing ====
 faster-whisper>=1.0.0
-#openai-whisper @ git+https://github.com/openai/whisper.git
 soundfile>=0.12.1
 librosa>=0.10.1
-coqpit>=0.0.17
-pyannote.audio>=3.1
-pyaudio>=0.2.14
-
-# ==== Utility ====
-pyserial>=3.5
-tqdm>=4.66.1
-matplotlib>=3.8.0
-psutil>=5.9.8
-loguru>=0.7.2
-colorama>=0.4.6
-
-# ==== Database / Persistence ====
-sqlalchemy>=2.0
-cryptography>=42.0.0
-
-# ==== Test & Tooling (Optional) ====
+gymnasium>=0.29.1
 pytest>=8.0.0
-pytest-cov>=4.1.0
-bandit>=1.7.7
 black>=24.0.0
 flake8>=7.0.0
 isort>=5.12.0
-mypy>=1.9.0
-
-# ==== Haptics / Serial / Hardware Integration ====
-pyusb>=1.2.1
-hidapi>=0.14.0
-
-# ==== Web (Optional if using Python as backend for UI) ====
+tqdm>=4.66.1
+matplotlib>=3.8.0
+psutil>=5.9.8
+sqlalchemy>=2.0.0
+cryptography>=42.0.0
 fastapi>=0.110.0
 uvicorn[standard]>=0.29.0
 websockets>=12.0
-
-# ==== Data Annotation / Labeling Tools ====
-ruamel.yaml>=0.18.0
-jsonschema>=4.22.0
-
-# ==== For Plotting and Dashboards ====
-seaborn>=0.13.2
-
-# ==== If running on Jetson/Nano, consider hardware CUDA packages separately ====
-# pip install torch==<Jetson compatible version> -f https://download.pytorch.org/whl/torch_stable.html
-
-# ======= END =======
+pyserial>=3.5

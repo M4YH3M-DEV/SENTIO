@@ -3,9 +3,9 @@ echo "🧹 Cleaning up SENTIO repository..."
 
 # Remove build artifacts
 git rm -r --cached sentio/firmware/esp32_servo_bridge/.pio/ 2>/dev/null
-git rm -r --cached sentio_ros2_ws/build/ 2>/dev/null
-git rm -r --cached sentio_ros2_ws/install/ 2>/dev/null
-git rm -r --cached sentio_ros2_ws/log/ 2>/dev/null
+git rm -r --cached sentio/ros2_ws/build/ 2>/dev/null
+git rm -r --cached sentio/ros2_ws/install/ 2>/dev/null
+git rm -r --cached sentio/ros2_ws/log/ 2>/dev/null
 
 # Remove Python cache
 find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null
@@ -36,7 +36,7 @@ __pycache__/
 EOF
 
 # Add placeholder tests
-for dir in $(find sentio_ros2_ws/src -type d -name tests); do
+for dir in $(find sentio/ros2_ws/src -type d -name tests); do
   touch "$dir/__init__.py" 2>/dev/null
 done
 

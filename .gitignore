@@ -110,3 +110,23 @@ __pycache__/
 
 # OS
 .DS_Store
+
+# Build artifacts
+.pio/
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.eggs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store

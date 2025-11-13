@@ -1,12 +1,14 @@
+'use client';
+
 /**
  * React Hook for topic subscription with cleanup
  */
 
 import { useEffect, useState } from 'react';
-import { ROSBridgeClient } from '@/lib/rosbridge';
+import ROSLIB from 'roslib';
 
-export function useTopicSubscription<T>(
-  client: ROSBridgeClient | null,
+export function useTopicSubscription<T = any>(
+  client: ROSLIB.Ros | null,
   topic: string,
   messageType: string,
   enabled = true
@@ -24,36 +26,26 @@ export function useTopicSubscription<T>(
   useEffect(() => {
     if (!client || !enabled) return;
 
-    let unsubscribe: (() => void) | null = null;
+    // Create a topic listener
+    const listener = new ROSLIB.Topic({
+      ros: client,
+      name: topic,
+      messageType: messageType,
+    });
 
-    client
-      .subscribe<T>(
-        {
-          topic,
-          messageType,
-          throttleRate: 100,
-          queueLength: 1,
-        },
-        (msg: T) => {
-          setMessage(msg);
-          setLastMessageTime(new Date());
-          setMessageCount(prev => prev + 1);
-        }
-      )
-      .then(unsubFn => {
-        unsubscribe = unsubFn;
-        setIsSubscribed(true);
-      })
-      .catch(error => {
-        console.error(`Failed to subscribe to ${topic}:`, error);
-        setIsSubscribed(false);
-      });
+    // Subscribe to the topic
+    listener.subscribe((msg: ROSLIB.Message) => {
+      setMessage(msg as T);
+      setLastMessageTime(new Date());
+      setMessageCount(prev => prev + 1);
+    });
 
+    setIsSubscribed(true);
+
+    // Cleanup: unsubscribe on unmount
     return () => {
-      if (unsubscribe) {
-        unsubscribe();
-        setIsSubscribed(false);
-      }
+      listener.unsubscribe();
+      setIsSubscribed(false);
     };
   }, [client, topic, messageType, enabled]);
 

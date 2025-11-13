@@ -87,7 +87,7 @@ export default function Home() {
             )}
 
             {activeTab === 'topics' && (
-              <TopicList client={client} />
+              <TopicList client={client} connected={connected} />
             )}
           </div>
         </div>

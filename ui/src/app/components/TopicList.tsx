@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ROSBridgeClient } from '@/lib/rosbridge';
-import { formatTimestamp, parseJSONSafely } from '@/lib/utils';
+import ROSLIB from 'roslib';
+import { formatTimestamp } from '@/lib/utils';
 
 interface TopicListProps {
-  client: ROSBridgeClient | null;
+  client: ROSLIB.Ros | null;
+  connected: boolean; // Add this prop
 }
 
 interface TopicInfo {
@@ -17,13 +18,13 @@ interface TopicInfo {
   publishers: number;
 }
 
-export default function TopicList({ client }: TopicListProps) {
+export default function TopicList({ client, connected }: TopicListProps) {
   const [topics, setTopics] = useState<Map<string, TopicInfo>>(new Map());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!client?.isConnected()) return;
+    if (!client || !connected) return; // Fixed - now using connected prop
 
     // In a real implementation, would fetch topics from ROS
     const commonTopics = [
@@ -47,7 +48,7 @@ export default function TopicList({ client }: TopicListProps) {
     });
 
     setTopics(topicMap);
-  }, [client]);
+  }, [client, connected]); // Add connected to dependencies
 
   const filteredTopics = Array.from(topics.values()).filter(topic =>
     topic.name.toLowerCase().includes(searchQuery.toLowerCase())

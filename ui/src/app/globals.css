@@ -111,3 +111,9 @@ body {
 .emotion-gradient-neutral {
   @apply bg-gradient-to-br from-gray-400 to-gray-600;
 }
+
+@layer utilities {
+  .border-border {
+    border-color: var(--sentio-border, #3b82f6);
+  }
+}

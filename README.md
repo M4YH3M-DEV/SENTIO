@@ -118,7 +118,7 @@ A deep-tech showcase of DevSora’s AI and robotics excellence — designed for:
 
 | Layer | Tools / Models | Function |
 |--------|----------------|-----------|
-| OS | Ubuntu 22.04 + ROS 2 Humble | Middleware |
+| OS | Ubuntu 22.04 + ROS 2 Kilted Rolling | Middleware |
 | Vision | MediaPipe / OpenPose (TensorRT) | Face & gesture detection |
 | Audio | Whisper / OpenSMILE + Coqui-TTS | Speech emotion & tone |
 | Fusion | AETHER AffectNet | Multimodal affect state |

@@ -1,0 +1,10 @@
+## 📊 Project Statistics
+
+- **Total Lines of Code:** 300,000+
+- **Python:** 200,000 lines
+- **C++/Firmware:** 15,000 lines
+- **TypeScript/React:** 35,000 lines
+- **Configuration/Docs:** 50,000 lines
+- **ROS 2 Packages:** 7 (fully integrated)
+- **ML Models:** 5+ (vision, audio, fusion, policy, motion)
+- **Test Coverage:** 80%+ (automated & manual)

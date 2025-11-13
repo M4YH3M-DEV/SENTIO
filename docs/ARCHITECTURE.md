@@ -70,3 +70,24 @@ Expressive Response + HUD Visualization
 - Haptic feedback skin  
 - Cognitive memory (temporal affect recognition)  
 - SENTIO SDK for third-party emotion→motion integration
+
+# SENTIO System Architecture
+
+## Data Flow
+\`\`\`
+Camera + Mic + LiDAR 
+  ↓
+[sentio_perception] - Feature extraction
+  ↓
+[sentio_fusion] - AETHER reasoning
+  ↓
+[sentio_policy] - Behavior selection
+  ↓
+[sentio_motion] - Servo control
+  ↓
+[sentio_demo] - Choreography execution
+  ↓
+Expression (gestures + lights + voice)
+  ↓
+[UI Dashboard] - Visualization & monitoring
+\`\`\`

@@ -1,4 +1,4 @@
-## 📊 Project Statistics
+## 📊 Project Statistics :-
 
 - **Total Lines of Code:** 300,000+
 - **Python:** 200,000 lines
